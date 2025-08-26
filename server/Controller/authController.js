@@ -6,15 +6,12 @@ exports.portAuthRequest = async (req, res, next) => {
         console.log(req.body);
         const { name, email, password, confirmPassword, role, phone, country } = req.body;
 
-        // Confirm password check
         if (password !== confirmPassword) {
             return res.status(400).json({ message: "Password and Confirm Password do not match" });
         }
 
-        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create user
         const SaveUser = new User({
             name,
             email,
@@ -24,7 +21,6 @@ exports.portAuthRequest = async (req, res, next) => {
             country
         });
 
-        // Save to DB
         await SaveUser.save();
 
         console.log('User saved successfully');
