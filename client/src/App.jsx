@@ -4,6 +4,11 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import FullLMS from './FullLMS'
 import Navbar from './components/Navbar'
+import {
+  Routes,
+  Route,
+  Link
+} from "react-router-dom";
 
 function App() {
   const [count, setCount] = useState(0)
