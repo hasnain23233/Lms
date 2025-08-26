@@ -1,0 +1,26 @@
+{
+  "name": "doroing_lms",
+  "version": "1.0.0",
+  "description": "This is a doroing lms. enjoy you learning on the doroing platforn",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "connect-mongodb-session": "^5.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.1",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "express-validator": "^7.2.1",
+    "mongodb": "^6.17.0",
+    "mongoose": "^8.16.2",
+    "multer": "^2.0.2",
+    "nodemon": "^3.1.10"
+  },
+  "author": "Hasnain Khushi",
+  "license": "ISC"
+}
