@@ -19,7 +19,7 @@ function App() {
         <div className='w-3/12 bg-gray-700'>
           <Navbar />
         </div>
-        <div className='w-9/12 h-full overflow-auto '>
+        <div className='w-9/12 h-full overflow-auto px-2 '>
           <FullLMS />
         </div>
       </div>

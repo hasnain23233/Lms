@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import Home from './mainPages/Home';
 import About from './mainPages/About';
+import Signup from './components/signup';
 
 const FullLMS = () => {
     return (
@@ -13,6 +14,7 @@ const FullLMS = () => {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/signup" element={<Signup />} />
             </Routes>
         </div>
     )
