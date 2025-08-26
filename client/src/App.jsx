@@ -2,14 +2,22 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import FullLMS from './FullLMS'
+import Navbar from './components/Navbar'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-
-      <h1 className='text-xl text-red-700'>this is a first lms application of the website</h1>
+      <div className='h-screen gap-6 bg-gray-800 text-white flex justify-between'>
+        <div className='w-3/12 bg-gray-700'>
+          <Navbar />
+        </div>
+        <div className='w-9/12 '>
+          <FullLMS />
+        </div>
+      </div>
     </>
   )
 }
