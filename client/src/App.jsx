@@ -15,11 +15,11 @@ function App() {
 
   return (
     <>
-      <div className='h-screen gap-6 bg-gray-800 text-white flex justify-between'>
+      <div className='h-screen gap-6 bg-gray-800 text-white flex justify-between overflow-hidden'>
         <div className='w-3/12 bg-gray-700'>
           <Navbar />
         </div>
-        <div className='w-9/12 '>
+        <div className='w-9/12 h-full overflow-auto '>
           <FullLMS />
         </div>
       </div>
