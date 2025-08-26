@@ -1,5 +1,6 @@
 const User = require('../Model/UserModel');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.portAuthRequest = async (req, res, next) => {
     try {
