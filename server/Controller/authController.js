@@ -1,3 +1,5 @@
-exports.firstRequest = (req, res, next) => {
-    res.send('MVC pattern works fine');
+const User = require('../Model/UserModel')
+
+exports.portAuthRequest = async (req, res, next) => {
+    console.log(req.body)
 }
