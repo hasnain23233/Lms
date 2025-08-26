@@ -16,9 +16,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-app.use('/api', AuthRouter)
+app.use('/api/auth', AuthRouter)
 
-mongoose.connect(MONGO_URL, { dbName: 'Dorooing(LMG)' }).then(app.listen(PORT, () => {
+mongoose.connect(MONGO_URL, { dbName: 'Dorooing_LMG' }).then(app.listen(PORT, () => {
     console.log('Connected to the database');
     console.log(`Server is running on http://localhost:${PORT}`);
 })).catch((err) => {

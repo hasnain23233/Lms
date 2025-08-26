@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import useAuthStore from '../store/authStore';
 
 export default function Signup() {
+    const { register, loading, error, user } = useAuthStore();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -15,9 +17,10 @@ export default function Signup() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Form Data Submitted:", formData);
+        await register(formData);
     };
 
     return (
@@ -26,6 +29,9 @@ export default function Signup() {
                 <h1 className="text-2xl font-bold text-yellow-400 text-center mb-10 tracking-wide">
                     Sign Up to Doroing LMS
                 </h1>
+                {error && <p className="text-red-500 mt-3">{error}</p>}
+                {user && <p className="text-green-600 mt-3">✅ {user.firstName} registered successfully!</p>}
+
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Full Name */}
                     <div>
@@ -138,7 +144,7 @@ export default function Signup() {
                             type="submit"
                             className="w-2/12 text-sm bg-yellow-400 text-gray-800 py-3 rounded-xl font-bold hover:bg-yellow-300 transition duration-300 shadow-md"
                         >
-                            Create Account
+                            {loading ? "Registering..." : "Register"}
                         </button>
                     </div>
                 </form>
