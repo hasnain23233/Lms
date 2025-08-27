@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import useAuthStore from '../store/authStore';
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
-    const { register, loading, error, user } = useAuthStore();
+    const { register, loading, error } = useAuthStore();
+    const [successMsg, setSuccessMsg] = useState(""); // ✅ success message state
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -20,7 +23,27 @@ export default function Signup() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Form Data Submitted:", formData);
-        await register(formData);
+
+        const res = await register(formData);
+
+        if (res?.message === "User registered successfully") {
+            setSuccessMsg("✅ Registered successfully! Redirecting to login...");
+            setFormData({
+                name: "",
+                email: "",
+                password: "",
+                confirmPassword: "",
+                role: "student",
+                phone: "",
+                country: "",
+            });
+
+            // 2 seconds baad login page par redirect
+            setTimeout(() => {
+                setSuccessMsg("");
+                navigate("/login");
+            }, 2000);
+        }
     };
 
     return (
@@ -29,8 +52,20 @@ export default function Signup() {
                 <h1 className="text-2xl font-bold text-yellow-400 text-center mb-10 tracking-wide">
                     Sign Up to Doroing LMS
                 </h1>
-                {error && <p className="text-red-500 mt-3">{error}</p>}
-                {user && <p className="text-green-600 mt-3">✅ {user.firstName} registered successfully!</p>}
+
+                {/* Success Notification */}
+                {successMsg && (
+                    <div className="bg-green-500 text-white text-center py-2 rounded mb-4">
+                        {successMsg}
+                    </div>
+                )}
+
+                {/* Error Notification */}
+                {error && (
+                    <div className="bg-red-500 text-white text-center py-2 rounded mb-4">
+                        ❌ {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Full Name */}
@@ -89,7 +124,7 @@ export default function Signup() {
                         />
                     </div>
 
-                    {/* Role Selection */}
+                    {/* Role */}
                     <div>
                         <label className="block text-gray-300 text-sm mb-2">Role</label>
                         <select
@@ -130,7 +165,7 @@ export default function Signup() {
                         />
                     </div>
 
-                    {/* Terms & Conditions */}
+                    {/* Terms */}
                     <div className="col-span-1 md:col-span-2 flex items-center gap-2">
                         <input type="checkbox" required />
                         <span className="text-gray-300 text-sm">
@@ -138,7 +173,7 @@ export default function Signup() {
                         </span>
                     </div>
 
-                    {/* Submit Button */}
+                    {/* Submit */}
                     <div className="col-span-1 md:col-span-2">
                         <button
                             type="submit"

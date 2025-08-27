@@ -19,13 +19,12 @@ const useAuthStore = create((set) => ({
 
             const data = await res.json();
 
-            if (!res.ok) {
-                throw new Error(data.message || "Something went wrong");
-            }
 
-            // save user in state and localStorage
-            localStorage.setItem("user", JSON.stringify(data.user));
-            set({ user: data.user, loading: false });
+            // save user in state 
+            if (res.ok) {
+                set({ message: data.message || 'You are Register' }); // Set success message
+            }
+            set({ loading: false });
             return data;
         } catch (err) {
             set({ error: err.message, loading: false });
