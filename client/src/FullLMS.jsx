@@ -9,6 +9,7 @@ import About from './mainPages/About';
 import Signup from './components/signup';
 import LoginForm from './components/Login';
 import AllCourses from './mainPages/AllCourses';
+import AddCourses from './mainPages/AddCourse';
 
 const FullLMS = () => {
     return (
@@ -19,6 +20,7 @@ const FullLMS = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/login" element={<LoginForm />} />
+                <Route path="/add-course" element={<AddCourses />} />
             </Routes>
         </div>
     )
