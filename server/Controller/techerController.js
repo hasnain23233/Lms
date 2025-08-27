@@ -13,10 +13,10 @@ exports.getAllCourses = async (req, res) => {
 exports.postAddCourse = async (req, res, next) => {
     try {
         console.log(req.body);
-        const { courseTitle, description, category, duration, price, youtubeLink, author } = req.body;
+        const { title, description, category, duration, price, youtubeLink, author } = req.body;
 
         const newCourse = new AddingCourse({
-            courseTitle,
+            title,
             description,
             category,
             duration,
@@ -30,7 +30,7 @@ exports.postAddCourse = async (req, res, next) => {
         console.log('Course added successfully');
         return res.status(201).json({
             message: "Course added successfully",
-            course: { courseTitle, description, category, duration, price, youtubeLink, author }
+            course: { title, description, category, duration, price, youtubeLink, author }
         });
 
     } catch (err) {
