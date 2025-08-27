@@ -10,6 +10,7 @@ import Signup from './components/signup';
 import LoginForm from './components/Login';
 import AllCourses from './mainPages/AllCourses';
 import AddCourses from './mainPages/AddCourse';
+import HandleCourses from './mainPages/HandleCourses';
 
 const FullLMS = () => {
     return (
@@ -21,6 +22,7 @@ const FullLMS = () => {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/add-course" element={<AddCourses />} />
+                <Route path="/handle-courses" element={<HandleCourses />} />
             </Routes>
         </div>
     )
