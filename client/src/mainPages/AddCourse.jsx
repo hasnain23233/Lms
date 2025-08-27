@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useTecherStore } from "../store/techerStore";
 
 export default function AddCourses() {
+    const { addCourse } = useTecherStore();
+
     const [courseData, setCourseData] = useState({
         title: "",
         description: "",
@@ -9,6 +12,7 @@ export default function AddCourses() {
         price: "",
         image: null,
         youtubeLink: "",
+        author: "",   // 🔹 Added Author
     });
 
     const [successMsg, setSuccessMsg] = useState("");
@@ -20,25 +24,21 @@ export default function AddCourses() {
         setCourseData({ ...courseData, [name]: value });
     };
 
-    const handleFileChange = (e) => {
-        setCourseData({ ...courseData, image: e.target.files[0] });
-    };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setSuccessMsg("");
         setErrorMsg("");
 
-        // Mock API call - backend integrate karna hoga
-        setTimeout(() => {
-            if (!courseData.title || !courseData.description) {
-                setErrorMsg("Please fill all required fields!");
-                setLoading(false);
-                return;
-            }
+        if (!courseData.title || !courseData.description || !courseData.author) {
+            setErrorMsg("Please fill all required fields!");
+            setLoading(false);
+            return;
+        }
 
-            console.log("Course Data Submitted:", courseData);
+        try {
+            await addCourse(courseData);
             setSuccessMsg("✅ Course added successfully!");
             setLoading(false);
 
@@ -49,10 +49,13 @@ export default function AddCourses() {
                 category: "Programming",
                 duration: "",
                 price: "",
-                image: null,
                 youtubeLink: "",
+                author: "",
             });
-        }, 1000);
+        } catch (error) {
+            setErrorMsg("❌ Failed to add course!");
+            setLoading(false);
+        }
     };
 
     return (
@@ -70,7 +73,7 @@ export default function AddCourses() {
                 )}
                 {errorMsg && (
                     <div className="bg-red-500 text-white text-center py-2 rounded mb-4">
-                        ❌ {errorMsg}
+                        {errorMsg}
                     </div>
                 )}
 
@@ -85,6 +88,20 @@ export default function AddCourses() {
                             onChange={handleChange}
                             className="w-full px-4 py-3 rounded-xl bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                             placeholder="Enter course title"
+                            required
+                        />
+                    </div>
+
+                    {/* Author */}
+                    <div>
+                        <label className="text-gray-300 mb-1 block">Author</label>
+                        <input
+                            type="text"
+                            name="author"
+                            value={courseData.author}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 rounded-xl bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            placeholder="Enter author name"
                             required
                         />
                     </div>
@@ -160,16 +177,6 @@ export default function AddCourses() {
                         />
                     </div>
 
-                    {/* Image */}
-                    <div>
-                        <label className="text-gray-300 mb-1 block">Course Image (Optional)</label>
-                        <input
-                            type="file"
-                            name="image"
-                            onChange={handleFileChange}
-                            className="w-full text-gray-300"
-                        />
-                    </div>
 
                     {/* Submit */}
                     <div className="flex justify-center mt-4">
