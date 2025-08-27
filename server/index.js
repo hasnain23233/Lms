@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const AuthRouter = require('./Router/authRouter')
+const TecherRouter = require('./Router/techerRouter')
 
 const app = express()
 const PORT = process.env.PORT || 5000;
@@ -17,10 +18,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.use('/api/auth', AuthRouter)
+app.use('/api/teacher', TecherRouter)
 
-mongoose.connect(MONGO_URL, { dbName: 'Dorooing_LMG' }).then(app.listen(PORT, () => {
-    console.log('Connected to the database');
-    console.log(`Server is running on http://localhost:${PORT}`);
-})).catch((err) => {
-    console.log('Sorry wen could not connect to the database', err.message);
-})
+mongoose.connect(MONGO_URL, { dbName: 'Dorooing_LMG' })
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log('Connected to the database');
+            console.log(`Server is running on http://localhost:${PORT}`);
+        });
+    })
+    .catch((err) => {
+        console.log('Sorry we could not connect to the database', err.message);
+    });
