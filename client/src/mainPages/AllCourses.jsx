@@ -1,15 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTecherStore } from "../store/techerStore";
+import useAuthStore from "../store/authStore";
 
 const getEmbedUrl = (url) => {
     if (!url) return "";
-
     let videoId = "";
 
     if (url.includes("watch?v=")) {
         videoId = url.split("v=")[1]?.split("&")[0];
-    }
-    else if (url.includes("youtu.be/")) {
+    } else if (url.includes("youtu.be/")) {
         videoId = url.split("youtu.be/")[1]?.split("?")[0];
     }
 
@@ -18,10 +17,25 @@ const getEmbedUrl = (url) => {
 
 export default function AllCourses() {
     const { courses, fetchCourses } = useTecherStore();
+    const { user } = useAuthStore(); // ✅ check login user
+    const [showOverlay, setShowOverlay] = useState({}); // track overlay per video
 
     useEffect(() => {
         fetchCourses();
     }, [fetchCourses]);
+
+    // ✅ Timer for guest user → after 1 min show overlay
+    useEffect(() => {
+        if (!user) {
+            const timers = {};
+            courses.forEach((course, index) => {
+                timers[index] = setTimeout(() => {
+                    setShowOverlay((prev) => ({ ...prev, [index]: true }));
+                }, 60000); // 1 minute = 60000ms
+            });
+            return () => Object.values(timers).forEach(clearTimeout);
+        }
+    }, [courses, user]);
 
     return (
         <div className="bg-gray-800 min-h-screen py-10 px-6">
@@ -36,18 +50,37 @@ export default function AllCourses() {
                     {courses.map((course, index) => (
                         <div
                             key={index}
-                            className="bg-gray-600 rounded-2xl shadow-lg p-6 hover:scale-105 transition-transform"
+                            className="bg-gray-600 rounded-2xl shadow-lg p-6 hover:scale-105 transition-transform relative"
                         >
                             {course.youtubeLink && (
-                                <div className="mb-4">
+                                <div className="mb-4 relative">
                                     <iframe
                                         className="w-full h-52 rounded-lg"
-                                        src={getEmbedUrl(course.youtubeLink)}
+                                        src={
+                                            user
+                                                ? getEmbedUrl(course.youtubeLink) // logged in => full video
+                                                : `${getEmbedUrl(course.youtubeLink)}?start=0&end=60` // guest => sirf 1 min
+                                        }
                                         title={course.title}
                                         frameBorder="0"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                         allowFullScreen
                                     ></iframe>
+
+                                    {/* ✅ Overlay after 1 min if not logged in */}
+                                    {!user && showOverlay[index] && (
+                                        <div className="absolute inset-0 bg-black bg-opacity-80 flex flex-col justify-center items-center rounded-lg">
+                                            <p className="text-white text-lg font-semibold mb-4">
+                                                Please login to watch full video
+                                            </p>
+                                            <button
+                                                onClick={() => (window.location.href = "/login")}
+                                                className="bg-yellow-400 text-gray-900 font-semibold px-4 py-2 rounded-lg hover:bg-yellow-500 transition"
+                                            >
+                                                Login Now
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
