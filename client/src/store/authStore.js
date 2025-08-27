@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 const useAuthStore = create((set) => ({
+    user: JSON.parse(localStorage.getItem("user")) || null, // reload fix
+    token: localStorage.getItem("token") || null, // reload fix
     user: null,
     token: null,
     loading: false,
@@ -21,7 +23,8 @@ const useAuthStore = create((set) => ({
                 throw new Error(data.message || "Something went wrong");
             }
 
-            // save user in state
+            // save user in state and localStorage
+            localStorage.setItem("user", JSON.stringify(data.user));
             set({ user: data.user, loading: false });
             return data;
         } catch (err) {
@@ -44,8 +47,9 @@ const useAuthStore = create((set) => ({
                 throw new Error(data.message || "Something went wrong");
             }
 
-            // Save token and user
-            localStorage.setItem("token", data.token);  // important
+            // Save token and user in localStorage
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
             set({ user: data.user, token: data.token, loading: false });
 
             return data;
@@ -56,6 +60,7 @@ const useAuthStore = create((set) => ({
 
     logout: () => {
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
         set({ user: null, token: null });
     }
 }));
