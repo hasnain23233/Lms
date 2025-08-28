@@ -35,3 +35,32 @@ exports.getQuizzesByCourse = async (req, res) => {
         res.status(500).json({ message: "Error fetching quizzes", error: err.message });
     }
 };
+
+exports.deleteQuiz = async (req, res) => {
+    try {
+        const quiz = await Quiz.findByIdAndDelete(req.params.id);
+        if (!quiz) return res.status(404).json({ message: "Quiz not found" });
+
+        res.json({ message: "Quiz deleted successfully" });
+    } catch (err) {
+        res.status(500).json({ message: "Error deleting quiz", error: err.message });
+    }
+};
+
+exports.updateQuiz = async (req, res) => {
+    try {
+        const { title, questions } = req.body;
+
+        const quiz = await Quiz.findByIdAndUpdate(
+            req.params.id,
+            { title, questions },
+            { new: true, runValidators: true }
+        );
+
+        if (!quiz) return res.status(404).json({ message: "Quiz not found" });
+
+        res.json({ message: "Quiz updated successfully", quiz });
+    } catch (err) {
+        res.status(500).json({ message: "Error updating quiz", error: err.message });
+    }
+};
