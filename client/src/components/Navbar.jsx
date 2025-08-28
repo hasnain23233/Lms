@@ -85,6 +85,12 @@ const Navbar = () => {
                                 >
                                     create quiz
                                 </Link>
+                                <Link
+                                    to="/manage-quiz"
+                                    className="block py-2 px-4 rounded text-gray-200 hover:bg-gray-600"
+                                >
+                                    manage quiz
+                                </Link>
                             </>
                         )}
                     </li>

@@ -43,6 +43,52 @@ export const useQuizStore = create((set) => ({
             console.error("Error fetching quizzes:", error);
         }
     },
+    deleteQuiz: async (quizId) => {
+        try {
+            const token = useAuthStore.getState().token;
+            const res = await fetch(`http://localhost:5000/api/quizzes/${quizId}`, {
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message);
+
+            set((state) => ({
+                quizzes: state.quizzes.filter((q) => q._id !== quizId),
+            }));
+
+            return { success: true, message: data.message };
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    },
+
+    // ✅ Update quiz
+    updateQuiz: async (quizId, updatedQuiz) => {
+        try {
+            const token = useAuthStore.getState().token;
+            const res = await fetch(`http://localhost:5000/api/quizzes/${quizId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(updatedQuiz),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message);
+
+            set((state) => ({
+                quizzes: state.quizzes.map((q) => (q._id === quizId ? data.quiz : q)),
+            }));
+
+            return { success: true, message: data.message };
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    },
 
     clearQuizzes: () => set({ quizzes: [] }),
 }));
