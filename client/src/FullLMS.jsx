@@ -11,6 +11,7 @@ import LoginForm from './components/Login';
 import AllCourses from './mainPages/AllCourses';
 import AddCourses from './mainPages/AddCourse';
 import HandleCourses from './mainPages/HandleCourses';
+import TeacherCreateQuiz from './mainPages/TeacherCreateQuiz';
 
 const FullLMS = () => {
     return (
@@ -23,6 +24,7 @@ const FullLMS = () => {
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/add-course" element={<AddCourses />} />
                 <Route path="/handle-courses" element={<HandleCourses />} />
+                <Route path="/create-quiz" element={<TeacherCreateQuiz />} />
             </Routes>
         </div>
     )
