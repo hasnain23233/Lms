@@ -4,6 +4,9 @@ const quizController = require("../Controller/quizeController");
 const { verifyToken } = require("../middleware/authMiddleware");
 
 router.post("/", verifyToken, quizController.postCreateQuiz);
+
+router.get("/", quizController.getAllQuizzes);
+
 router.get("/:courseId", quizController.getQuizzesByCourse);
 router.put("/:id", quizController.updateQuiz);
 router.delete("/:id", quizController.deleteQuiz);

@@ -31,18 +31,35 @@ export const useQuizStore = create((set) => ({
             return { success: false, message: error.message };
         }
     },
+    fetchAllQuizzes: async () => {
+        try {
+            const response = await fetch("http://localhost:5000/api/quizzes");
+            const result = await response.json();
+
+            if (!response.ok) throw new Error(result.message || "Failed to fetch quizzes");
+
+            set({ quizzes: result });
+        } catch (error) {
+            console.error("Error fetching all quizzes:", error);
+        }
+    },
+
 
     fetchQuizzesByCourse: async (courseId) => {
         try {
             const response = await fetch(`http://localhost:5000/api/quizzes/${courseId}`);
             const result = await response.json();
+            console.log("Fetched quizzes result:", result); // 👈 Debug karo
+
             if (!response.ok) throw new Error(result.message || "Failed to fetch quizzes");
 
-            set({ quizzes: result });
+            // agar backend { quizzes: [...] } return karta hai
+            set({ quizzes: result.quizzes || result });
         } catch (error) {
             console.error("Error fetching quizzes:", error);
         }
     },
+
     deleteQuiz: async (quizId) => {
         try {
             const token = useAuthStore.getState().token;

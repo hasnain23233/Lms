@@ -27,6 +27,15 @@ exports.postCreateQuiz = async (req, res) => {
     }
 };
 
+exports.getAllQuizzes = async (req, res) => {
+    try {
+        const quizzes = await Quiz.find().populate("courseId").populate("createdBy", "email");
+        res.json(quizzes);
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching quizzes", error: err.message });
+    }
+};
+
 exports.getQuizzesByCourse = async (req, res) => {
     try {
         const quizzes = await Quiz.find({ courseId: req.params.courseId });
