@@ -6,12 +6,14 @@ export const useQuizStore = create((set) => ({
     // ✅ Create new quiz
     createQuiz: async (quizData) => {
         try {
-            const token = localStorage.getItem("token");
+            // get logged-in user id from localStorage
+            const user = JSON.parse(localStorage.getItem("user"));
+
             const response = await fetch("http://localhost:5000/api/quizzes", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`, // protected route
+                    "userid": user?._id, // ✅ backend fallback uses this
                 },
                 body: JSON.stringify(quizData),
             });
