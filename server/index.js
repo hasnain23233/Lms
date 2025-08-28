@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const AuthRouter = require('./Router/authRouter')
 const TecherRouter = require('./Router/techerRouter')
+const QuizRouter = require('./Router/quizRouter')
+const AssignmentRouter = require('./Router/assignmentRouter')
 
 const app = express()
 const PORT = process.env.PORT || 5000;
@@ -19,6 +21,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/auth', AuthRouter)
 app.use('/api/teacher', TecherRouter)
+app.use("/api/assignments", AssignmentRouter);
+app.use("/api/quizzes", QuizRouter);
 
 mongoose.connect(MONGO_URL, { dbName: 'Dorooing_LMG' })
     .then(() => {
