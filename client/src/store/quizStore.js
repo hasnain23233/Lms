@@ -1,19 +1,19 @@
 import { create } from "zustand";
+import useAuthStore from "./authStore";
 
 export const useQuizStore = create((set) => ({
     quizzes: [],
 
-    // ✅ Create new quiz
     createQuiz: async (quizData) => {
         try {
-            // get logged-in user id from localStorage
-            const user = JSON.parse(localStorage.getItem("user"));
+            const token = useAuthStore.getState().token;
+            if (!token) throw new Error("User not logged in");
 
             const response = await fetch("http://localhost:5000/api/quizzes", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "userid": user?._id, // ✅ backend fallback uses this
+                    Authorization: `Bearer ${token}`, // must be Bearer <token>
                 },
                 body: JSON.stringify(quizData),
             });
@@ -32,7 +32,6 @@ export const useQuizStore = create((set) => ({
         }
     },
 
-    // ✅ Fetch quizzes by course
     fetchQuizzesByCourse: async (courseId) => {
         try {
             const response = await fetch(`http://localhost:5000/api/quizzes/${courseId}`);
@@ -45,6 +44,5 @@ export const useQuizStore = create((set) => ({
         }
     },
 
-    // ✅ Clear quizzes from store
     clearQuizzes: () => set({ quizzes: [] }),
 }));

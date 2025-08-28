@@ -1,16 +1,12 @@
 const Quiz = require("../Model/Quiz");
 
-exports.postCreateQuiz = async (req, res) => {
-    console.log("Request body:", req.body);
-    try {
-        const { title, courseId, questions, createdBy } = req.body;
 
-        // Temporary fallback if createdBy is missing
-        let teacherId = createdBy;
-        if (!teacherId) {
-            // Fallback: try getting from req.headers.userId (frontend can send logged-in teacher id)
-            teacherId = req.headers.userid;
-        }
+exports.postCreateQuiz = async (req, res) => {
+    try {
+        const { title, courseId, questions } = req.body;
+
+        // ✅ Teacher ID from verified token
+        const teacherId = req.user?.id;
 
         if (!title || !courseId || !questions?.length || !teacherId) {
             return res.status(400).json({ message: "Missing required fields" });
@@ -20,7 +16,7 @@ exports.postCreateQuiz = async (req, res) => {
             title,
             courseId,
             questions,
-            createdBy: teacherId, // use resolved teacher id
+            createdBy: teacherId, // must be ObjectId
         });
 
         await quiz.save();
