@@ -1,6 +1,6 @@
 const Quiz = require("../models/Quiz");
 
-exports.createQuiz = async (req, res) => {
+exports.postCreateQuiz = async (req, res) => {
     try {
         const quiz = new Quiz({
             ...req.body,
