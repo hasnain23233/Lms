@@ -5,6 +5,10 @@ const assignmentController = require("../Controller/AssignmentController");
 // Create Assignment
 router.post("/create", assignmentController.createAssignment);
 
+
+// Get all assignments (no filter)
+router.get("/", assignmentController.getAllAssignments);
+
 // Get all assignments by Course ID
 router.get("/course/:courseId", assignmentController.getAssignmentsByCourse);
 

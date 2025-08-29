@@ -97,6 +97,12 @@ const Navbar = () => {
                                 >
                                     make assignment
                                 </Link>
+                                <Link
+                                    to="/handle-assignment"
+                                    className="block py-2 px-4 rounded text-gray-200 hover:bg-gray-600"
+                                >
+                                    handle assignment
+                                </Link>
                             </>
                         )}
                     </li>

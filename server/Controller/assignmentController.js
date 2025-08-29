@@ -25,6 +25,15 @@ exports.getAssignmentsByCourse = async (req, res) => {
     }
 };
 
+exports.getAllAssignments = async (req, res) => {
+    try {
+        const assignments = await Assignment.find().sort({ createdAt: -1 });
+        res.json(assignments);
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching assignments", error: err.message });
+    }
+};
+
 // Update assignment
 exports.updateAssignment = async (req, res) => {
     try {
