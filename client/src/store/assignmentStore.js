@@ -7,11 +7,11 @@ export const useAssignmentStore = create((set) => ({
     createAssignment: async (assignmentData) => {
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch("http://localhost:5000/api/assignments", {
+            const response = await fetch("http://localhost:5000/api/assignment/create", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`, // protected route
+                    ...(token && { Authorization: `Bearer ${token}` }),
                 },
                 body: JSON.stringify(assignmentData),
             });
@@ -19,11 +19,17 @@ export const useAssignmentStore = create((set) => ({
             const result = await response.json();
             if (!response.ok) throw new Error(result.message || "Failed to create assignment");
 
+            const newAssignment = result.assignment || result;
+
             set((state) => ({
-                assignments: [...state.assignments, result.assignment],
+                assignments: [...state.assignments, newAssignment],
             }));
 
-            return { success: true, message: result.message, assignment: result.assignment };
+            return {
+                success: true,
+                message: result.message || "Assignment created",
+                assignment: newAssignment,
+            };
         } catch (error) {
             console.error("Error creating assignment:", error);
             return { success: false, message: error.message };
@@ -33,13 +39,15 @@ export const useAssignmentStore = create((set) => ({
     // ✅ Fetch assignments by course
     fetchAssignmentsByCourse: async (courseId) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/assignments/${courseId}`);
+            const response = await fetch(`http://localhost:5000/api/assignment/course/${courseId}`);
             const result = await response.json();
             if (!response.ok) throw new Error(result.message || "Failed to fetch assignments");
 
             set({ assignments: result });
+            return { success: true, assignments: result };
         } catch (error) {
             console.error("Error fetching assignments:", error);
+            return { success: false, message: error.message };
         }
     },
 

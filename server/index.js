@@ -15,13 +15,12 @@ const MONGO_URL = process.env.MONGO_URL
 
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json())
-app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
 app.use('/api/auth', AuthRouter)
 app.use('/api/teacher', TecherRouter)
-app.use("/api/assignments", AssignmentRouter);
+app.use("/api/assignment", AssignmentRouter);
 app.use("/api/quizzes", QuizRouter);
 
 mongoose.connect(MONGO_URL, { dbName: 'Dorooing_LMG' })

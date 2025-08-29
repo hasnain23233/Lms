@@ -83,19 +83,19 @@ const Navbar = () => {
                                     to="/create-quiz"
                                     className="block py-2 px-4 rounded text-gray-200 hover:bg-gray-600"
                                 >
-                                    Create Quiz
+                                    create quiz
                                 </Link>
                                 <Link
                                     to="/manage-quiz"
                                     className="block py-2 px-4 rounded text-gray-200 hover:bg-gray-600"
                                 >
-                                    Manage Quiz
+                                    manage quiz
                                 </Link>
                                 <Link
                                     to="/make-assignment"
                                     className="block py-2 px-4 rounded text-gray-200 hover:bg-gray-600"
                                 >
-                                    Make Assignment
+                                    make assignment
                                 </Link>
                             </>
                         )}
