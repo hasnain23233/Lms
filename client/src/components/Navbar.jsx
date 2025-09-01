@@ -49,10 +49,10 @@ const Navbar = () => {
                             <>
 
                                 <Link
-                                    to="/student-courses"
+                                    to="/enroll-courses"
                                     className="block py-2 px-4 rounded text-gray-200 hover:bg-gray-600"
                                 >
-                                    Your Courses
+                                    Enroll-courses
                                 </Link>
                                 <Link
                                     to="/take-quiz"

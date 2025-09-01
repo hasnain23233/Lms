@@ -16,6 +16,7 @@ import ManageQuiz from './mainPages/ManageQuiz';
 import TeacherAssignments from './mainPages/TeacherAssignments';
 import TeacherHandleAssignments from './mainPages/TeacherHandleAssignments';
 import QuizzesPage from './mainPages/students/quizzesPage';
+import EnrollTheCourses from './mainPages/students/EnrollTheCourses';
 
 const FullLMS = () => {
     return (
@@ -35,6 +36,7 @@ const FullLMS = () => {
 
                 {/* student Routes */}
                 <Route path="/take-quiz" element={<QuizzesPage />} />
+                <Route path="/enroll-courses" element={<EnrollTheCourses />} />
             </Routes>
         </div>
     )
