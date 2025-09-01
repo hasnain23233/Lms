@@ -8,6 +8,9 @@ const TecherRouter = require('./Router/techerRouter')
 const QuizRouter = require('./Router/quizRouter')
 const AssignmentRouter = require('./Router/assignmentRouter')
 
+// studentRouters
+const EnrollmentRouter = require("./Router/studentRouters/enrollmentRouter");
+
 const app = express()
 const PORT = process.env.PORT || 5000;
 
@@ -22,6 +25,10 @@ app.use('/api/auth', AuthRouter)
 app.use('/api/teacher', TecherRouter)
 app.use("/api/assignment", AssignmentRouter);
 app.use("/api/quizzes", QuizRouter);
+
+// studentRouters
+app.use("/api/enrollment", EnrollmentRouter);
+
 
 mongoose.connect(MONGO_URL, { dbName: 'Dorooing_LMG' })
     .then(() => {
