@@ -15,6 +15,7 @@ import TeacherCreateQuiz from './mainPages/TeacherCreateQuiz';
 import ManageQuiz from './mainPages/ManageQuiz';
 import TeacherAssignments from './mainPages/TeacherAssignments';
 import TeacherHandleAssignments from './mainPages/TeacherHandleAssignments';
+import QuizzesPage from './mainPages/students/quizzesPage';
 
 const FullLMS = () => {
     return (
@@ -31,6 +32,9 @@ const FullLMS = () => {
                 <Route path="/manage-quiz" element={<ManageQuiz />} />
                 <Route path="/make-assignment" element={<TeacherAssignments />} />
                 <Route path="/handle-assignment" element={<TeacherHandleAssignments />} />
+
+                {/* student Routes */}
+                <Route path="/take-quiz" element={<QuizzesPage />} />
             </Routes>
         </div>
     )
