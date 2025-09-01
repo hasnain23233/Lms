@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useTecherStore } from "../store/techerStore";
 import useAuthStore from "../store/authStore";
-import { useEnrollmentStore } from "../store/assignmentStore"; // ✅ new import
+import { useEnrollmentStore } from "../store/studentEnrollmentStore";
+import { useNavigate } from "react-router-dom";
 
 const getEmbedUrl = (url) => {
     if (!url) return "";
@@ -21,6 +22,7 @@ export default function AllCourses() {
     const { user } = useAuthStore(); // ✅ current login user
     const { enrollCourse } = useEnrollmentStore(); // ✅ zustand function
     const [showOverlay, setShowOverlay] = useState({});
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchCourses();
@@ -46,13 +48,17 @@ export default function AllCourses() {
             return;
         }
 
+        console.log("Enrolling course with ID:", courseId); // ✅ Debugging
+
         try {
-            await enrollCourse(user._id, courseId);
+            await enrollCourse(courseId); // ✅ only courseId
             alert("✅ Enrolled Successfully!");
+            navigate("/enroll-courses");
         } catch (err) {
             alert(err.message || "❌ Error while enrolling");
         }
     };
+
 
     return (
         <div className="bg-gray-800 min-h-screen py-10 px-6">

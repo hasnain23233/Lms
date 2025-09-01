@@ -3,7 +3,9 @@ const Enrollment = require("../../Model/studentModels/EnrollmentModel");
 // ✅ Enroll in a course
 exports.enrollCourse = async (req, res) => {
     try {
-        const { studentId, courseId } = req.body;
+        const studentId = req.user.id;  // token se nikal liya
+        const { courseId } = req.body;
+        console.log("Enroll request received:", { studentId, courseId });
 
         // Check if already enrolled
         const exist = await Enrollment.findOne({ studentId, courseId });
@@ -21,8 +23,7 @@ exports.enrollCourse = async (req, res) => {
 // ✅ Get all enrolled courses for a student
 exports.getMyCourses = async (req, res) => {
     try {
-        const { studentId } = req.params;
-
+        const studentId = req.user.id; // token se user id
         const enrollments = await Enrollment.find({ studentId }).populate("courseId");
 
         res.status(200).json({ courses: enrollments.map(e => e.courseId) });

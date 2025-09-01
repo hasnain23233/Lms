@@ -1,48 +1,60 @@
-// store/studentEnrollmentStore.js
+// src/store/enrollmentStore.js
 import { create } from "zustand";
 
 export const useEnrollmentStore = create((set) => ({
-    myCourses: [],
+    enrollments: [],
 
     // ✅ Enroll in a course
-    enrollCourse: async (studentId, courseId) => {
+    enrollCourse: async (courseId) => {
+        console.log("Sending to backend:", { courseId });
+
         try {
+            const token = localStorage.getItem("token");
             const response = await fetch("http://localhost:5000/api/enrollment/enroll", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ studentId, courseId }),
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                },
+                body: JSON.stringify({ courseId }), // studentId backend me JWT se niklega
             });
 
             const result = await response.json();
-            if (!response.ok) throw new Error(result.message || "Failed to enroll");
+            console.log("Enrollment API result:", result);
 
-            // Add new course to store (just courseId reference)
+            if (!response.ok) throw new Error(result.message || "Enrollment failed");
+
             set((state) => ({
-                myCourses: [...state.myCourses, result.enrollment.courseId],
+                enrollments: [...state.enrollments, result.enrollment], // ✅ only enrollment object push
             }));
 
-            return { success: true, message: result.message };
+            return { success: true, enrollment: result.enrollment };
         } catch (error) {
             console.error("Error enrolling:", error);
             return { success: false, message: error.message };
         }
     },
 
-    // ✅ Fetch all enrolled courses
-    fetchMyCourses: async (studentId) => {
+    // ✅ Fetch all enrollments
+    fetchEnrollments: async () => {
         try {
-            const response = await fetch(
-                `http://localhost:5000/api/enrollment/my-courses/${studentId}`
-            );
+            const token = localStorage.getItem("token");
+            const response = await fetch("http://localhost:5000/api/enrollment/my-courses", {
+                headers: {
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                },
+            });
+
             const result = await response.json();
-            if (!response.ok) throw new Error(result.message || "Failed to fetch my courses");
+            console.log("Fetch Enrollments API result:", result);
 
-            set({ myCourses: result.courses });
+            if (!response.ok) throw new Error(result.message || "Failed to fetch enrollments");
+
+            set({ enrollments: result.courses }); // ✅ backend se courses array aata hai
+            return { success: true, enrollments: result.courses };
         } catch (error) {
-            console.error("Error fetching my courses:", error);
+            console.error("Error fetching enrollments:", error);
+            return { success: false, message: error.message };
         }
-    },
-
-    // ✅ Clear
-    clearEnrollments: () => set({ myCourses: [] }),
+    }
 }));
