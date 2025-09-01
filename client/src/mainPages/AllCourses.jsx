@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTecherStore } from "../store/techerStore";
 import useAuthStore from "../store/authStore";
+import { useEnrollmentStore } from "../store/assignmentStore"; // ✅ new import
 
 const getEmbedUrl = (url) => {
     if (!url) return "";
@@ -17,8 +18,9 @@ const getEmbedUrl = (url) => {
 
 export default function AllCourses() {
     const { courses, fetchCourses } = useTecherStore();
-    const { user } = useAuthStore(); // ✅ check login user
-    const [showOverlay, setShowOverlay] = useState({}); // track overlay per video
+    const { user } = useAuthStore(); // ✅ current login user
+    const { enrollCourse } = useEnrollmentStore(); // ✅ zustand function
+    const [showOverlay, setShowOverlay] = useState({});
 
     useEffect(() => {
         fetchCourses();
@@ -31,11 +33,26 @@ export default function AllCourses() {
             courses.forEach((course, index) => {
                 timers[index] = setTimeout(() => {
                     setShowOverlay((prev) => ({ ...prev, [index]: true }));
-                }, 60000); // 1 minute = 60000ms
+                }, 60000);
             });
             return () => Object.values(timers).forEach(clearTimeout);
         }
     }, [courses, user]);
+
+    // ✅ handle enroll button click
+    const handleEnroll = async (courseId) => {
+        if (!user) {
+            alert("Please login to enroll in a course!");
+            return;
+        }
+
+        try {
+            await enrollCourse(user._id, courseId);
+            alert("✅ Enrolled Successfully!");
+        } catch (err) {
+            alert(err.message || "❌ Error while enrolling");
+        }
+    };
 
     return (
         <div className="bg-gray-800 min-h-screen py-10 px-6">
@@ -58,8 +75,8 @@ export default function AllCourses() {
                                         className="w-full h-52 rounded-lg"
                                         src={
                                             user
-                                                ? getEmbedUrl(course.youtubeLink) // logged in => full video
-                                                : `${getEmbedUrl(course.youtubeLink)}?start=0&end=60` // guest => sirf 1 min
+                                                ? getEmbedUrl(course.youtubeLink)
+                                                : `${getEmbedUrl(course.youtubeLink)}?start=0&end=60`
                                         }
                                         title={course.title}
                                         frameBorder="0"
@@ -67,7 +84,6 @@ export default function AllCourses() {
                                         allowFullScreen
                                     ></iframe>
 
-                                    {/* ✅ Overlay after 1 min if not logged in */}
                                     {!user && showOverlay[index] && (
                                         <div className="absolute inset-0 bg-black bg-opacity-80 flex flex-col justify-center items-center rounded-lg">
                                             <p className="text-white text-lg font-semibold mb-4">
@@ -88,25 +104,24 @@ export default function AllCourses() {
                                 {course.title}
                             </h2>
                             <p className="text-gray-300 text-sm mb-2">
-                                <span className="text-yellow-400">Category:</span>{" "}
-                                {course.category}
+                                <span className="text-yellow-400">Category:</span> {course.category}
                             </p>
                             <p className="text-gray-300 text-sm mb-2">
-                                <span className="text-yellow-400">Author:</span>{" "}
-                                {course.author}
+                                <span className="text-yellow-400">Author:</span> {course.author}
                             </p>
                             <p className="text-gray-400 mb-4">{course.description}</p>
                             <div className="flex justify-between text-sm text-gray-300 mb-4">
                                 <span>
-                                    <span className="text-yellow-400">Duration:</span>{" "}
-                                    {course.duration} weeks
+                                    <span className="text-yellow-400">Duration:</span> {course.duration} weeks
                                 </span>
                                 <span>
-                                    <span className="text-yellow-400">Price:</span> $
-                                    {course.price}
+                                    <span className="text-yellow-400">Price:</span> ${course.price}
                                 </span>
                             </div>
-                            <button className="bg-yellow-400 text-gray-900 font-semibold px-4 py-2 rounded-lg w-full hover:bg-yellow-500 transition">
+                            <button
+                                onClick={() => handleEnroll(course._id)}
+                                className="bg-yellow-400 text-gray-900 font-semibold px-4 py-2 rounded-lg w-full hover:bg-yellow-500 transition"
+                            >
                                 Enroll Now
                             </button>
                         </div>
