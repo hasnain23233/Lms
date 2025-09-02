@@ -107,5 +107,5 @@ export const useQuizStore = create((set) => ({
         }
     },
 
-    clearQuizzes: () => set({ quizzes: [] }),
+    clearQuizzes: () => set({ quizzes: [] }), yyyyyy
 }));
