@@ -20,7 +20,6 @@ const TeacherCreateQuiz = () => {
         if (field === "questionText" || field === "correctAnswer") {
             updated[index][field] = value;
         } else {
-            // field is option index
             updated[index].options[field] = value;
         }
         setQuestions(updated);
@@ -28,10 +27,13 @@ const TeacherCreateQuiz = () => {
 
     // Add new question
     const addQuestion = () => {
-        setQuestions([...questions, { questionText: "", options: ["", ""], correctAnswer: "" }]);
+        setQuestions([
+            ...questions,
+            { questionText: "", options: ["", ""], correctAnswer: "" },
+        ]);
     };
 
-    // Add new option to a question
+    // Add new option
     const addOption = (index) => {
         const updated = [...questions];
         updated[index].options.push("");
@@ -40,26 +42,32 @@ const TeacherCreateQuiz = () => {
 
     // Remove question
     const removeQuestion = (index) => {
-        const updated = [...questions];
-        updated.splice(index, 1);
-        setQuestions(updated);
+        if (questions.length > 1) {
+            const updated = [...questions];
+            updated.splice(index, 1);
+            setQuestions(updated);
+        }
     };
 
     // Handle submit
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!title || !courseId) {
-            setMessage("Please fill quiz title and select a course");
+            setMessage("⚠️ Please fill quiz title and select a course");
             return;
         }
         setLoading(true);
         const data = await createQuiz({ title, courseId, questions });
         setLoading(false);
-        setMessage(data.success ? "Quiz created successfully!" : data.message);
+
+        setMessage(data.success ? "✅ Quiz created successfully!" : `❌ ${data.message}`);
+
         if (data.success) {
             setTitle("");
             setCourseId("");
             setQuestions([{ questionText: "", options: ["", ""], correctAnswer: "" }]);
+
+            setTimeout(() => setMessage(""), 3000); // 3 sec baad message hide
         }
     };
 
@@ -69,7 +77,7 @@ const TeacherCreateQuiz = () => {
 
             {message && (
                 <div
-                    className={`mb-4 p-3 rounded ${message.includes("success") ? "bg-green-500" : "bg-red-500"
+                    className={`mb-4 p-3 rounded ${message.includes("✅") ? "bg-green-500" : "bg-red-500"
                         }`}
                 >
                     {message}
@@ -114,24 +122,29 @@ const TeacherCreateQuiz = () => {
                         <div key={i} className="mb-4 p-4 bg-gray-700 rounded">
                             <div className="flex justify-between items-center mb-2">
                                 <h3 className="font-semibold">Question {i + 1}</h3>
-                                <button
-                                    type="button"
-                                    onClick={() => removeQuestion(i)}
-                                    className="text-red-400 hover:text-red-600 font-bold"
-                                >
-                                    Remove
-                                </button>
+                                {questions.length > 1 && (
+                                    <button
+                                        type="button"
+                                        onClick={() => removeQuestion(i)}
+                                        className="text-red-400 hover:text-red-600 font-bold"
+                                    >
+                                        Remove
+                                    </button>
+                                )}
                             </div>
 
                             <input
                                 type="text"
                                 placeholder="Question text"
                                 value={q.questionText}
-                                onChange={(e) => handleQuestionChange(i, "questionText", e.target.value)}
+                                onChange={(e) =>
+                                    handleQuestionChange(i, "questionText", e.target.value)
+                                }
                                 className="w-full mb-2 p-2 rounded bg-gray-600 text-white"
                                 required
                             />
 
+                            {/* Options */}
                             <div className="space-y-2">
                                 {q.options.map((opt, idx) => (
                                     <input
@@ -139,7 +152,9 @@ const TeacherCreateQuiz = () => {
                                         type="text"
                                         placeholder={`Option ${idx + 1}`}
                                         value={opt}
-                                        onChange={(e) => handleQuestionChange(i, idx, e.target.value)}
+                                        onChange={(e) =>
+                                            handleQuestionChange(i, idx, e.target.value)
+                                        }
                                         className="w-full p-2 rounded bg-gray-600 text-white"
                                         required
                                     />
@@ -153,14 +168,22 @@ const TeacherCreateQuiz = () => {
                                 </button>
                             </div>
 
-                            <input
-                                type="text"
-                                placeholder="Correct Answer"
+                            {/* Correct Answer Dropdown */}
+                            <select
                                 value={q.correctAnswer}
-                                onChange={(e) => handleQuestionChange(i, "correctAnswer", e.target.value)}
+                                onChange={(e) =>
+                                    handleQuestionChange(i, "correctAnswer", e.target.value)
+                                }
                                 className="w-full mt-2 p-2 rounded bg-gray-600 text-white"
                                 required
-                            />
+                            >
+                                <option value="">-- Select Correct Answer --</option>
+                                {q.options.map((opt, idx) => (
+                                    <option key={idx} value={opt}>
+                                        {opt || `Option ${idx + 1}`}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     ))}
                 </div>
@@ -177,7 +200,7 @@ const TeacherCreateQuiz = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-3 mt-4 bg-yellow-400 text-gray-800 font-bold rounded hover:bg-yellow-500"
+                        className="w-full py-3 mt-4 bg-yellow-400 text-gray-800 font-bold rounded hover:bg-yellow-500 disabled:opacity-50"
                     >
                         {loading ? "Creating..." : "Create Quiz"}
                     </button>

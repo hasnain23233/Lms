@@ -18,14 +18,14 @@ const QuizzesPage = () => {
 
     // ✅ Select option
     const handleOptionChange = (qIndex, option) => {
-        setAnswers({ ...answers, [qIndex]: option });
+        setAnswers((prev) => ({ ...prev, [qIndex]: option }));
     };
 
     // ✅ Submit quiz attempt
     const handleSubmit = async () => {
         try {
             const formattedAnswers = selectedQuiz.questions.map((q, i) => ({
-                questionId: i,
+                questionId: q._id,
                 selectedOption: answers[i],
             }));
 
@@ -49,23 +49,47 @@ const QuizzesPage = () => {
             {selectedQuiz ? (
                 <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
                     <h3 className="text-xl font-semibold mb-4">{selectedQuiz.title}</h3>
-                    {selectedQuiz.questions.map((q, index) => (
-                        <div key={index} className="mb-4">
-                            <p className="font-medium">{q.questionText}</p>
-                            {q.options.map((opt, i) => (
-                                <label key={i} className="block">
-                                    <input
-                                        type="radio"
-                                        name={`q-${index}`}
-                                        value={opt}
-                                        checked={answers[index] === opt}
-                                        onChange={() => handleOptionChange(index, opt)}
-                                    />
-                                    {opt}
-                                </label>
-                            ))}
+
+                    {selectedQuiz.questions.map((q, qIndex) => (
+                        <div key={qIndex} className="mb-4">
+                            <p className="text-white font-semibold">{q.questionText}</p>
+
+                            {/* 🔍 Debugging log */}
+                            {console.log("Question data =>", q)}
+
+                            {/* ✅ Agar q.options exist nahi karta to Object.values try karenge */}
+                            {Array.isArray(q.options) && q.options.length > 0 ? (
+                                q.options.map((opt, optIndex) => (
+                                    <label key={optIndex} className="block text-white">
+                                        <input
+                                            type="radio"
+                                            name={`question-${qIndex}`}
+                                            value={opt}
+                                            checked={answers[qIndex] === opt}
+                                            onChange={() => handleOptionChange(qIndex, opt)}
+                                        />
+                                        {opt}
+                                    </label>
+                                ))
+                            ) : q.options && typeof q.options === "object" ? (
+                                Object.values(q.options).map((opt, optIndex) => (
+                                    <label key={optIndex} className="block text-white">
+                                        <input
+                                            type="radio"
+                                            name={`question-${qIndex}`}
+                                            value={opt}
+                                            checked={answers[qIndex] === opt}
+                                            onChange={() => handleOptionChange(qIndex, opt)}
+                                        />
+                                        {opt}
+                                    </label>
+                                ))
+                            ) : (
+                                <p className="text-red-400">⚠️ No options found for this question</p>
+                            )}
                         </div>
                     ))}
+
                     <button
                         onClick={handleSubmit}
                         className="bg-green-600 px-4 py-2 rounded text-white"
@@ -75,22 +99,20 @@ const QuizzesPage = () => {
                 </div>
             ) : (
                 <div>
-                    {/* ✅ Show all quizzes */}
+                    {/* ✅ Show result after attempt */}
                     {result && (
                         <div className="mb-4 p-3 bg-blue-700 rounded">
                             🎉 Your Score: {result.score} / {result.total}
                         </div>
                     )}
 
+                    {/* ✅ Show all quizzes */}
                     {quizzes.length === 0 ? (
                         <p>No quizzes available</p>
                     ) : (
                         <ul className="space-y-4">
                             {quizzes.map((quiz) => (
-                                <li
-                                    key={quiz._id}
-                                    className="bg-gray-700 p-4 rounded-lg shadow-lg"
-                                >
+                                <li key={quiz._id} className="bg-gray-700 p-4 rounded-lg shadow-lg">
                                     <h3 className="text-lg font-semibold">{quiz.title}</h3>
                                     <p className="text-sm text-gray-300">
                                         Course: {quiz.courseId?.title}
