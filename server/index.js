@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
@@ -10,6 +9,8 @@ const AssignmentRouter = require('./Router/assignmentRouter')
 
 // studentRouters
 const EnrollmentRouter = require("./Router/studentRouters/enrollmentRouter");
+const StudentQuizRouter = require("./Router/studentRouters/studentQuizRouter");
+
 
 const app = express()
 const PORT = process.env.PORT || 5000;
@@ -28,6 +29,7 @@ app.use("/api/quizzes", QuizRouter);
 
 // studentRouters
 app.use("/api/enrollment", EnrollmentRouter);
+app.use("/api/student/quizzes", StudentQuizRouter);
 
 
 mongoose.connect(MONGO_URL, { dbName: 'Dorooing_LMG' })
