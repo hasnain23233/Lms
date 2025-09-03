@@ -60,6 +60,12 @@ const Navbar = () => {
                                 >
                                     take quiz
                                 </Link>
+                                <Link
+                                    to="/assignment-courses"
+                                    className="block py-2 px-4 rounded text-gray-200 hover:bg-gray-600"
+                                >
+                                    assignments
+                                </Link>
                             </>
                         )}
                         {user && user.role === 'teacher' && (
