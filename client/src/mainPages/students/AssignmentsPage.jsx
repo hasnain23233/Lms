@@ -12,24 +12,33 @@ const AssignmentsPage = () => {
         if (token) fetchMyAssignments(token);
     }, [token, fetchMyAssignments]);
 
+    // ✅ Submit with validation
     const handleSubmit = async () => {
+        if (!submissionContent.trim()) {
+            alert("⚠️ Please write something before submitting.");
+            return;
+        }
+
         const res = await submitAssignment(token, selectedAssignment._id, submissionContent);
 
         if (res.success) {
             alert("✅ Assignment submitted successfully!");
             setSelectedAssignment(null);
             setSubmissionContent("");
+            fetchMyAssignments(token); // refresh
         } else {
             alert("❌ " + res.message);
         }
     };
 
-    if (loading) return <div className="flex justify-center items-center h-64">
-        <div className="w-12 h-12 border-4 border-yellow-500 border-dashed rounded-full animate-spin"></div>
-        <span className="ml-3 text-yellow-400 text-lg animate-pulse">
-            Loading assignment...
-        </span>
-    </div>;
+    if (loading) return (
+        <div className="flex justify-center items-center h-64">
+            <div className="w-12 h-12 border-4 border-yellow-500 border-dashed rounded-full animate-spin"></div>
+            <span className="ml-3 text-yellow-400 text-lg animate-pulse">
+                Loading assignments...
+            </span>
+        </div>
+    );
     if (error) return <p className="text-red-500">{error}</p>;
 
     return (
@@ -48,13 +57,17 @@ const AssignmentsPage = () => {
 
                     <button
                         onClick={handleSubmit}
-                        className="bg-green-600 px-4 py-2 rounded text-white"
+                        disabled={!submissionContent.trim()} // ✅ disable empty submit
+                        className={`px-4 py-2 rounded text-white ${!submissionContent.trim()
+                            ? "bg-green-600 opacity-50 cursor-not-allowed"
+                            : "bg-green-600 hover:bg-green-700"
+                            }`}
                     >
                         Submit Assignment
                     </button>
                     <button
                         onClick={() => setSelectedAssignment(null)}
-                        className="ml-2 bg-red-600 px-4 py-2 rounded text-white"
+                        className="ml-2 bg-red-600 px-4 py-2 rounded text-white hover:bg-red-700"
                     >
                         Cancel
                     </button>
@@ -72,7 +85,10 @@ const AssignmentsPage = () => {
                                 <button
                                     onClick={() => setSelectedAssignment(assignment)}
                                     disabled={assignment.submitted}
-                                    className={`mt-2 px-3 py-1 rounded text-white ${assignment.submitted ? "bg-gray-500 cursor-not-allowed" : "bg-yellow-500"}`}
+                                    className={`mt-2 px-3 py-1 rounded text-white ${assignment.submitted
+                                        ? "bg-gray-500 cursor-not-allowed"
+                                        : "bg-yellow-500 hover:bg-yellow-600"
+                                        }`}
                                 >
                                     {assignment.submitted ? "Already Submitted" : "Submit Assignment"}
                                 </button>
