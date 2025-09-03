@@ -30,10 +30,10 @@ export const useStudentQuizStore = create((set) => ({
         }
     },
 
-    // ✅ Attempt Quiz
+    // ✅ Attempt Quiz (Fixed URL)
     attemptQuiz: async (token, quizId, answers) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/student/attempt/${quizId}`, {
+            const res = await fetch(`${API_URL}/attempt/${quizId}`, {   // 👈 FIXED
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
