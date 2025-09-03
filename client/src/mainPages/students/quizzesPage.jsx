@@ -11,30 +11,34 @@ const QuizzesPage = () => {
 
     // ✅ Fetch quizzes on load
     useEffect(() => {
-        if (token) {
-            fetchMyQuizzes(token);
-        }
+        if (token) fetchMyQuizzes(token);
     }, [token, fetchMyQuizzes]);
 
     // ✅ Select option
-    const handleOptionChange = (qIndex, option) => {
-        setAnswers((prev) => ({ ...prev, [qIndex]: option }));
+    const handleOptionChange = (qId, option) => {
+        setAnswers(prev => ({ ...prev, [qId]: option }));
     };
 
     // ✅ Submit quiz attempt
     const handleSubmit = async () => {
-        try {
-            const formattedAnswers = selectedQuiz.questions.map((q, i) => ({
-                questionId: q._id,
-                selectedOption: answers[i],
-            }));
+        if (!selectedQuiz) return;
 
+        const formattedAnswers = selectedQuiz.questions.map(q => ({
+            questionId: q._id,
+            selectedOption: answers[q._id] || ""
+        }));
+
+        try {
             const res = await attemptQuiz(token, selectedQuiz._id, formattedAnswers);
             setResult(res);
+
+            // Mark quiz as attempted in frontend state
+            selectedQuiz.attempted = true;
+
             setSelectedQuiz(null);
             setAnswers({});
         } catch (err) {
-            alert("Error submitting quiz");
+            alert(err.message || "Error submitting quiz");
         }
     };
 
@@ -55,41 +59,24 @@ const QuizzesPage = () => {
         <div className="p-6 text-white">
             <h2 className="text-2xl font-bold mb-4">Take Quizzes</h2>
 
-            {/* ✅ If quiz selected show quiz questions */}
+            {/* ✅ Quiz Questions */}
             {selectedQuiz ? (
                 <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
                     <h3 className="text-xl font-semibold mb-4">{selectedQuiz.title}</h3>
 
-                    {selectedQuiz.questions.map((q, qIndex) => (
-                        <div key={qIndex} className="mb-4">
+                    {selectedQuiz.questions.map(q => (
+                        <div key={q._id} className="mb-4">
                             <p className="text-white font-semibold">{q.questionText}</p>
 
-                            {/* 🔍 Debugging log */}
-                            {console.log("Question data =>", q)}
-
-                            {/* ✅ Agar q.options exist nahi karta to Object.values try karenge */}
                             {Array.isArray(q.options) && q.options.length > 0 ? (
-                                q.options.map((opt, optIndex) => (
-                                    <label key={optIndex} className="block text-white">
+                                q.options.map((opt, idx) => (
+                                    <label key={idx} className="block text-white">
                                         <input
                                             type="radio"
-                                            name={`question-${qIndex}`}
+                                            name={`question-${q._id}`}
                                             value={opt}
-                                            checked={answers[qIndex] === opt}
-                                            onChange={() => handleOptionChange(qIndex, opt)}
-                                        />
-                                        {opt}
-                                    </label>
-                                ))
-                            ) : q.options && typeof q.options === "object" ? (
-                                Object.values(q.options).map((opt, optIndex) => (
-                                    <label key={optIndex} className="block text-white">
-                                        <input
-                                            type="radio"
-                                            name={`question-${qIndex}`}
-                                            value={opt}
-                                            checked={answers[qIndex] === opt}
-                                            onChange={() => handleOptionChange(qIndex, opt)}
+                                            checked={answers[q._id] === opt}
+                                            onChange={() => handleOptionChange(q._id, opt)}
                                         />
                                         {opt}
                                     </label>
@@ -109,7 +96,7 @@ const QuizzesPage = () => {
                 </div>
             ) : (
                 <div>
-                    {/* ✅ Show result after attempt */}
+                    {/* ✅ Result */}
                     {result && (
                         <div className="mb-4 p-3 bg-blue-700 rounded">
                             🎉 Your Score: {result.score} / {result.total}
@@ -121,7 +108,7 @@ const QuizzesPage = () => {
                         <p>No quizzes available</p>
                     ) : (
                         <ul className="space-y-4">
-                            {quizzes.map((quiz) => (
+                            {quizzes.map(quiz => (
                                 <li key={quiz._id} className="bg-gray-700 p-4 rounded-lg shadow-lg">
                                     <h3 className="text-lg font-semibold">{quiz.title}</h3>
                                     <p className="text-sm text-gray-300">
@@ -129,9 +116,13 @@ const QuizzesPage = () => {
                                     </p>
                                     <button
                                         onClick={() => setSelectedQuiz(quiz)}
-                                        className="bg-yellow-500 mt-2 px-3 py-1 rounded text-white"
+                                        disabled={quiz.attempted} // ✅ Disable if already attempted
+                                        className={`mt-2 px-3 py-1 rounded text-white ${quiz.attempted
+                                            ? "bg-gray-500 cursor-not-allowed"
+                                            : "bg-yellow-500"
+                                            }`}
                                     >
-                                        Attempt Quiz
+                                        {quiz.attempted ? "Already Attempted" : "Attempt Quiz"}
                                     </button>
                                 </li>
                             ))}
