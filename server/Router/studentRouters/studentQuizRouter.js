@@ -9,4 +9,4 @@ router.get("/me", verifyToken, studentQuizController.getQuizzesForStudent);
 router.post("/attempt/:quizId", verifyToken, studentQuizController.attemptQuiz);
 
 
-module.exports = router;
+module.exports = router;    
