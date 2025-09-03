@@ -10,6 +10,7 @@ const AssignmentRouter = require('./Router/assignmentRouter')
 // studentRouters
 const EnrollmentRouter = require("./Router/studentRouters/enrollmentRouter");
 const StudentQuizRouter = require("./Router/studentRouters/studentQuizRouter");
+const StudentAssignmentRouter = require("./Router/studentRouters/studentAssignmentRouter");
 
 
 const app = express()
@@ -30,6 +31,7 @@ app.use("/api/quizzes", QuizRouter);
 // studentRouters
 app.use("/api/enrollment", EnrollmentRouter);
 app.use("/api/student/quizzes", StudentQuizRouter);
+app.use("/api/student/assignments", StudentAssignmentRouter);
 
 
 mongoose.connect(MONGO_URL, { dbName: 'Dorooing_LMG' })
