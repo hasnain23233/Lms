@@ -23,12 +23,7 @@ const Navbar = () => {
                 </h1>
                 <ul>
                     <li>
-                        <Link
-                            to="/all-courses"
-                            className="block py-2 px-4 rounded text-gray-200 hover:bg-gray-600 mt-6"
-                        >
-                            All Course
-                        </Link>
+
                         {!user ? (
                             <>
                                 <Link
@@ -47,6 +42,18 @@ const Navbar = () => {
                         ) : null}
                         {user && user.role === 'student' && (
                             <>
+                                <Link
+                                    to="/dashboard"
+                                    className="block py-2 px-4 rounded text-gray-200 hover:bg-gray-600 mt-6"
+                                >
+                                    Dashboard
+                                </Link>
+                                <Link
+                                    to="/all-courses"
+                                    className="block py-2 px-4 rounded text-gray-200 hover:bg-gray-600"
+                                >
+                                    All Course
+                                </Link>
 
                                 <Link
                                     to="/enroll-courses"
