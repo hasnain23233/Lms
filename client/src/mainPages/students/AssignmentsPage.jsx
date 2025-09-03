@@ -24,7 +24,12 @@ const AssignmentsPage = () => {
         }
     };
 
-    if (loading) return <p className="text-yellow-400">Loading assignments...</p>;
+    if (loading) return <div className="flex justify-center items-center h-64">
+        <div className="w-12 h-12 border-4 border-yellow-500 border-dashed rounded-full animate-spin"></div>
+        <span className="ml-3 text-yellow-400 text-lg animate-pulse">
+            Loading assignment...
+        </span>
+    </div>;
     if (error) return <p className="text-red-500">{error}</p>;
 
     return (
