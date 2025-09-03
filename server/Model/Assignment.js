@@ -15,12 +15,12 @@ const assignmentSchema = new mongoose.Schema({
     },
     courseId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",
+        ref: "AddingCourse",
         required: true,
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Teacher",
+        ref: "users",
         required: true,
     }
 }, { timestamps: true });

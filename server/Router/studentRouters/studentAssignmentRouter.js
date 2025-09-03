@@ -6,7 +6,7 @@ const { verifyToken } = require("../../middleware/authMiddleware");
 // Get assignments for logged-in student
 router.get("/me", verifyToken, getAssignmentsForStudent);
 
-// Submit assignment
+// Submit an assignment
 router.post("/submit/:assignmentId", verifyToken, submitAssignment);
 
 module.exports = router;

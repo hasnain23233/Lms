@@ -2,20 +2,17 @@ import { create } from "zustand";
 
 const API_URL = "http://localhost:5000/api/student/assignments";
 
-export const useStudentAssignmentStore = create((set) => ({
+export const useStudentAssignmentStore = create((set, get) => ({
     assignments: [],
     loading: false,
     error: null,
 
-    // ✅ Fetch assignments for logged-in student
+    // ✅ Fetch logged-in student's assignments
     fetchMyAssignments: async (token) => {
         set({ loading: true, error: null });
         try {
             const res = await fetch(`${API_URL}/me`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
+                headers: { Authorization: `Bearer ${token}` }
             });
 
             if (!res.ok) {
@@ -30,7 +27,7 @@ export const useStudentAssignmentStore = create((set) => ({
         }
     },
 
-    // ✅ Submit assignment (text/link)
+    // ✅ Submit an assignment
     submitAssignment: async (token, assignmentId, content) => {
         try {
             const res = await fetch(`${API_URL}/submit/${assignmentId}`, {
@@ -42,24 +39,15 @@ export const useStudentAssignmentStore = create((set) => ({
                 body: JSON.stringify({ content }),
             });
 
-            if (!res.ok) {
-                const errData = await res.json();
-                throw new Error(errData.message || "Failed to submit assignment");
-            }
-
             const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Failed to submit assignment");
 
-            // Update assignment as submitted in store
-            set((state) => ({
-                assignments: state.assignments.map((a) =>
-                    a._id === assignmentId ? { ...a, submitted: true } : a
-                ),
-            }));
+            // Refresh assignments after submission
+            await get().fetchMyAssignments(token);
 
-            return data;
+            return { success: true, message: data.message };
         } catch (err) {
-            console.error("Submit Assignment Error:", err);
-            throw err;
+            return { success: false, message: err.message };
         }
     },
 }));

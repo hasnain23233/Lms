@@ -2,12 +2,12 @@ const Enrollment = require("../../Model/studentModels/EnrollmentModel");
 const Assignment = require("../../Model/Assignment");
 const StudentAssignmentAttempt = require("../../Model/studentModels/StudentAssignmentAttempt");
 
-// ✅ Get assignments for enrolled courses
+// Get assignments for student
 exports.getAssignmentsForStudent = async (req, res) => {
     try {
         const studentId = req.user.id;
 
-        // Enrolled courses
+        // Courses student is enrolled in
         const enrollments = await Enrollment.find({ studentId }).select("courseId");
         const courseIds = enrollments.map(e => e.courseId);
 
@@ -21,7 +21,7 @@ exports.getAssignmentsForStudent = async (req, res) => {
             .populate("createdBy", "name email")
             .sort({ dueDate: -1 });
 
-        // Student submissions
+        // Submissions of the student
         const attempts = await StudentAssignmentAttempt.find({ studentId }).select("assignmentId");
         const submittedAssignmentIds = new Set(attempts.map(a => a.assignmentId.toString()));
 
@@ -31,32 +31,31 @@ exports.getAssignmentsForStudent = async (req, res) => {
         }));
 
         res.json({ assignments: assignmentsWithFlag });
-
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "Error fetching assignments", error: err.message });
     }
 };
 
-// ✅ Submit assignment
+// Submit assignment
 exports.submitAssignment = async (req, res) => {
     try {
         const studentId = req.user.id;
         const { assignmentId } = req.params;
         const { content } = req.body;
 
-        // 🔒 Check if already submitted
+        // 🚨 Validation: content required
+        if (!content || content.trim() === "") {
+            return res.status(400).json({ message: "Submission content is required" });
+        }
+
+        // check if already submitted
         const existing = await StudentAssignmentAttempt.findOne({ studentId, assignmentId });
         if (existing) {
             return res.status(400).json({ message: "You have already submitted this assignment" });
         }
 
-        // 🔍 Check if assignment exists
-        const assignment = await Assignment.findById(assignmentId);
-        if (!assignment) {
-            return res.status(404).json({ message: "Assignment not found" });
-        }
-
-        // ✅ Save submission
+        // create new submission
         const attempt = new StudentAssignmentAttempt({
             studentId,
             assignmentId,
@@ -65,9 +64,9 @@ exports.submitAssignment = async (req, res) => {
 
         await attempt.save();
 
-        res.status(201).json({ message: "Assignment submitted successfully" });
+        res.status(201).json({ message: "Assignment submitted successfully", attempt });
     } catch (err) {
-        console.error("Submit assignment error:", err);
         res.status(500).json({ message: "Error submitting assignment", error: err.message });
     }
 };
+
