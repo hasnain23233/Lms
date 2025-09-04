@@ -43,5 +43,3 @@ The LMS is designed to provide teachers and students with an easy-to-use platfor
 
 ---
 
-## 📂 Project Structure  
-
