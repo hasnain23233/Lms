@@ -4,6 +4,8 @@ This is a **Full Stack Learning Management System (LMS)** developed as part of m
 The LMS is designed to provide teachers and students with an easy-to-use platform for managing courses, assignments, and quizzes.  
 
 ---
+## Demo Video
+video (https://www.linkedin.com/posts/hasnain-khushi-web-developer_techzoid-fullstackdevelopment-mern-activity-7369256330785607681-hPAx?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEoUIKIBC5YfqcZFrJ7f9CcLkDlAZg_x7rs)
 
 ## 🚀 Features  
 
